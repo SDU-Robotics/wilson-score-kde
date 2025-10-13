@@ -1,0 +1,20 @@
+[project]
+name = "wilson-score-kde"
+version = "0.1.0"
+description = "A multi-dimensional implementation of the Wilson Score kernel density estimator using a Gaussian kernel"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "matplotlib>=3.10.3",
+    "numpy>=2.2.6",
+    "pyqt6>=6.9.0",
+    "torch>=2.7.0",
+    "tqdm>=4.67.1",
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["wskde"]

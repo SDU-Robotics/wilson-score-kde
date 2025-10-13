@@ -1,0 +1,7 @@
+.vscode
+build
+Build
+cpp/Wrapper/cmake/WSKDEWrapperLibTargets.cmake
+wilson_score_kde.egg-info
+wskde/__pycache__
+uv.lock
