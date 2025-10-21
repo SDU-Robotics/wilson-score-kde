@@ -14,25 +14,25 @@ if __name__ == "__main__":
     upper = 5
     x1s = torch.linspace(lower, upper, steps=n_1d)
     x2s = torch.linspace(lower, upper, steps=n_1d)
-    x1_gt, x2_gt = torch.meshgrid(x1s, x2s, indexing='xy')
-    y_gt = sigmoid2d(x1_gt,x2_gt)
+    x1_test, x2_test = torch.meshgrid(x1s, x2s, indexing='xy')
+    y_gt = sigmoid2d(x1_test,x2_test)
     n_samples_gt = n_1d*n_1d
     if visualize:
         ax = plt.axes(projection='3d')
-        ax.plot_surface(x1_gt.numpy(), x2_gt.numpy(), y_gt.numpy())
+        ax.plot_surface(x1_test.numpy(), x2_test.numpy(), y_gt.numpy())
 
     # Generate a random dataset by:
     # 1) randomly sampling parameter values
     # 2) computing the success rate for each value
     # 3) Performing Bernoulli trials using the computed success rates
     n_samples_rand = 25000
-    x1_rand = lower + (upper-lower)*torch.rand((n_samples_rand))
-    x2_rand = lower + (upper-lower)*torch.rand((n_samples_rand))
-    x_rand = torch.stack((x1_rand,x2_rand)).T #shape (n,2)
-    prob_rand = sigmoid2d(x1_rand,x2_rand)
-    y_rand = torch.bernoulli(prob_rand) #shape (n)
+    x1_train = lower + (upper-lower)*torch.rand((n_samples_rand))
+    x2_train = lower + (upper-lower)*torch.rand((n_samples_rand))
+    x_train = torch.stack((x1_train,x2_train)).T #shape (n,2)
+    prob_rand = sigmoid2d(x1_train,x2_train)
+    y_train = torch.bernoulli(prob_rand) #shape (n)
     if visualize:
-        ax.scatter(x_rand[:,0], x_rand[:,1], y_rand, color='r')
+        ax.scatter(x_train[:,0], x_train[:,1], y_train, color='r')
         plt.show()
 
     # Compute WilsonScore KDE bounds for the given parameter values
@@ -43,30 +43,29 @@ if __name__ == "__main__":
     #      to perform online inference from all points
     h = 0.1
     wskde = WSKDE(torch.diag(torch.Tensor([h,h])))
-    wskde.set_training_samples(x_rand,y_rand)
-    x_gt = torch.reshape(torch.stack((x1_gt, x2_gt)),(2,-1)).T
-    x_wskde = x_gt
-    p_wskde, sigma_wskde = wskde(x_wskde,z=1.96)
+    wskde.set_training_samples(x_train,y_train)
+    x_test = torch.reshape(torch.stack((x1_test, x2_test)),(2,-1)).T
+    p_test, sigma_test = wskde(x_test,z=1.96)
 
 
     # Plot the ground truth success rate function, and the WSKDE bounds as both
     # Contour plots and scatter plots
-    x1 = x_gt[:,0].reshape(n_1d,n_1d) # convert x_gt, p_wskde, and sigma_wskde into the original meshgrid
-    x2 = x_gt[:,1].reshape(n_1d,n_1d)
-    p_con = p_wskde.reshape(n_1d,n_1d)
-    sigma_con = sigma_wskde.reshape(n_1d,n_1d)
+    x1 = x_test[:,0].reshape(n_1d,n_1d) # convert x_gt, p_wskde, and sigma_wskde into the original meshgrid
+    x2 = x_test[:,1].reshape(n_1d,n_1d)
+    p_contour = p_test.reshape(n_1d,n_1d)
+    sigma_contour = sigma_test.reshape(n_1d,n_1d)
 
     plt.figure()
-    plt.contour(x1,x2,p_con, levels=[0.5], colors='blue')
-    plt.contour(x1,x2,p_con -sigma_con, levels=[0.5], colors='red')
-    plt.contour(x1,x2,p_con +sigma_con, levels=[0.5], colors='green')
+    plt.contour(x1,x2,p_contour, levels=[0.5], colors='blue')
+    plt.contour(x1,x2,p_contour -sigma_contour, levels=[0.5], colors='red')
+    plt.contour(x1,x2,p_contour +sigma_contour, levels=[0.5], colors='green')
     plt.contour(x1,x2,y_gt, levels=[0.5],colors='black')
     plt.show()
     
     plt.figure()
     ax_estimate = plt.axes(projection='3d')
-    ax_estimate.scatter(x_gt[:,0], x_gt[:,1], p_wskde, color='b')
-    ax_estimate.scatter(x_gt[:,0], x_gt[:,1], p_wskde+sigma_wskde, color='g')
-    ax_estimate.scatter(x_gt[:,0], x_gt[:,1], p_wskde-sigma_wskde, color='r')
+    ax_estimate.scatter(x_test[:,0], x_test[:,1], p_test, color='b')
+    ax_estimate.scatter(x_test[:,0], x_test[:,1], p_test+sigma_test, color='g')
+    ax_estimate.scatter(x_test[:,0], x_test[:,1], p_test-sigma_test, color='r')
     plt.show()
 

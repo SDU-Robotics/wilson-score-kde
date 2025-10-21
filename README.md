@@ -32,7 +32,7 @@ The example demonstrates how to:
 1. Define a bandwidth matrix H
 1. Initialize WSKDE with H
 1. Set the supervised dataset used for inference
-1. Compute the z-confidence bounds as $p\pm\sigma$
+1. Compute the z-confidence bounds as p ± σ
 
 (see examples/simple_1D.py for full example)
 
@@ -45,7 +45,7 @@ h = 0.5
 H = torch.diag(torch.Tensor([h]))
 wskde = WSKDE(H)
 wskde.set_training_samples(x_train, y_train)
-p_wskde, sigma_wskde = wskde(x_test, z=1.96)
+p_test, sigma_test = wskde(x_test, z=1.96)
 ```
 
 ## C++
