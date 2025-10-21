@@ -12,41 +12,29 @@ UV can be installed as [Standalone](https://docs.astral.sh/uv/getting-started/in
 curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-## Usage
-
-### Using Package from Remote
-
-The WS-KDE package can be added directly to your uv project over https by:
-
-- HTTPS: ```uv add git+https://github.com/SDU-Robotics/wilson-score-kde.git```
-
-### Using Package from Local
-
-To clone the python package and install it with pip, do the following:
-
-1. Clone project from git
-1. Activate your virtual python environment
-1. cd to the root of the wilson-score-kde folder
-1. ```pip install .```
-
 ## Example
 
 This repository includes a simple 1D example which showcases WSKDE.
 In the example the WSKDE confidence bounds are calculated and plotted.
-The example can be executued by:
+The example can be executued by cloning the repository, installing the
+required python packages using uv sync, and running the example as
+follows:
 
 ```bash
+git clone https://github.com/SDU-Robotics/wilson-score-kde.git
+cd wilson-score-kde
+uv sync
 uv run examples/simple_1D/simple_1D.py
 ```
 
-The example goes through:
+The example demonstrates how to:
 
 1. Define a bandwidth matrix H
 1. Initialize WSKDE with H
 1. Set the supervised dataset used for inference
 1. Compute the z-confidence bounds as $p\pm\sigma$
 
-Example (see examples/simple_1D.py for full example):
+(see examples/simple_1D.py for full example)
 
 ```python
 from wskde.wskde import WSKDE
@@ -78,6 +66,7 @@ Navigate into the following folder while standing in the root folder of this rep
 cd cpp/Wrapper/
 mkdir build
 cd build/
+source ../../../.venv/bin/activate
 cmake ..
 make
 ```
@@ -102,7 +91,24 @@ make
 ./WSKDEWrapperLibExample
 ```
 
-## A note on the literature
+## Including WS-KDE in external projects
+
+### Using Package from Remote
+
+The WS-KDE package can be added directly to your uv project over https by:
+
+- HTTPS: ```uv add git+https://github.com/SDU-Robotics/wilson-score-kde.git```
+
+### Using Package from Local
+
+To clone the python package and install it with pip, do the following:
+
+1. Clone project from git
+1. Activate your virtual python environment
+1. cd to the root of the wilson-score-kde folder
+1. ```pip install .```
+
+## Citations
 If you found this repository useful, please cite:
 
 ```
